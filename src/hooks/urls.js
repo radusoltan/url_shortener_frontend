@@ -17,10 +17,10 @@ export const useUrls = ()=>{
             .then(() => mutate())
     }
 
-    const addUrl = ({ url, success }) => {
+    const addUrl = ({ url }) => {
 
         axios.post('/api/urls', {url})
-            .then(res => mutate())
+            .then(() => mutate())
 
     }
 
