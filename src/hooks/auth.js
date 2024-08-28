@@ -7,6 +7,7 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
     const router = useRouter()
     const params = useParams()
 
+    // Get logged User Data
     const { data: user, error, mutate } = useSWR('/api/user', () =>
         axios
             .get('/api/user')
@@ -18,8 +19,12 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
             }),
     )
 
+    // To authenticate your SPA, your SPA's "login" page should first make a request to the
+    // /sanctum/csrf-cookie endpoint to initialize CSRF protection for the application
     const csrf = () => axios.get('/sanctum/csrf-cookie')
 
+
+    //Register new User
     const register = async ({ setErrors, ...props }) => {
         await csrf()
 
@@ -35,6 +40,7 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
             })
     }
 
+    // Login User
     const login = async ({ setErrors, setStatus, ...props }) => {
         await csrf()
 
@@ -91,6 +97,7 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
             .then(response => setStatus(response.data.status))
     }
 
+    // Logout the User
     const logout = async () => {
         if (!error) {
             await axios.post('/logout').then(() => mutate())

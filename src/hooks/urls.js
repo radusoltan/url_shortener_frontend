@@ -1,15 +1,18 @@
 import useSWR from 'swr'
 import axios from '@/lib/axios'
+import { useSearchParams } from 'next/navigation'
 
 export const useUrls = ()=>{
-    const {data, mutate } = useSWR('/api/user/urls', async ()=>{
+    const searchParams = useSearchParams()
+    const page = searchParams.has('page') ? searchParams.get('page') : 1
+    const {data, mutate } = useSWR(`/api/user/urls?page=${page}`, async ()=>{
 
-        const response = await axios.get('/api/urls')
+        const response = await axios.get(`/api/urls?page=${page}`)
         return response.data
 
     })
 
-    const editUrl = ({url,data, success})=>{
+    const editUrl = ({url,data})=>{
         axios.put(`/api/urls/${url}`, { original_url: data })
             .then(() => mutate())
     }
@@ -21,7 +24,7 @@ export const useUrls = ()=>{
 
     }
 
-    const deleteUrl = ({url, success}) => {
+    const deleteUrl = ({url}) => {
         axios.delete(`/api/urls/${url}`)
             .then(()=>mutate())
     }

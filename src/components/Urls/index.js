@@ -3,14 +3,24 @@ import { useUrls } from '@/hooks/urls'
 import { useState } from 'react'
 import { NewUrl } from '@/components/Urls/New'
 import { EditUrl } from '@/components/Urls/Edit'
+import ReactPaginate from 'react-paginate'
+import { useRouter } from 'next/navigation'
 
 const Urls = ()=>{
-    const {data, addUrl, deleteUrl} = useUrls()
+    const {data, deleteUrl} = useUrls({page: 1})
     const [open, setOpen] = useState(false)
     const [isEdit, setIsEdit] = useState(false)
     const [selectedUrl, setSelectedUrl] = useState(null)
+    const router = useRouter()
+
+    const handlePageChange = page => {
+
+        router.push(`/dashboard?page=${page.selected +1}`)
+
+    }
 
     return <>
+        {/* Open Modal for Adding new URL */}
         <button
             type="button"
             data-autofocus
@@ -20,8 +30,12 @@ const Urls = ()=>{
             Add
         </button>
 
+
+        {/* New URL Modal */}
         <NewUrl open={open} close={()=>setOpen(false)} setSelectedUrl={setSelectedUrl} />
 
+
+        {/* Edit URL modal */}
         {isEdit && <EditUrl url={selectedUrl} open={isEdit} close={()=>setIsEdit(false)} />}
 
         <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -46,7 +60,8 @@ const Urls = ()=>{
                             {url.original_url}
                         </td>
                         <td className="px-6 py-4">
-                            <a href={process.env.NEXT_PUBLIC_BACKEND_URL +'/'+url.shortened_url} target="_blank" rel="noopener noreferrer">
+                            {/* redirection from the shortened URL to the specified target URL */}
+                            <a href={process.env.NEXT_PUBLIC_BACKEND_URL +'/'+url.shortened_url} target="_blank">
                                 {url.shortened_url}
                             </a>
                         </td>
@@ -65,6 +80,24 @@ const Urls = ()=>{
                 }
                 </tbody>
             </table>
+            <div className="mt-5">
+                <ReactPaginate
+                    onPageChange={handlePageChange}
+                    initialPage={Number(data?.meta.current_page) - 1}
+                    activeClassName="text-white bg-blue-500"
+                    pageCount={Math.ceil(data?.meta.total / 15)}
+                    breakLabel="..."
+                    nextLabel={'->'}
+                    pageRangeDisplayed={5}
+                    previousLabel={'<-'}
+                    containerClassName="inline-flex -space-x-px text-sm"
+                    pageClassName="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700"
+                    breakLinkClassName="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700"
+                    previousClassName="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700"
+                    nextClassName="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700"
+                    renderOnZeroPageCount={null}
+                />
+            </div>
         </div>
     </>
 }
