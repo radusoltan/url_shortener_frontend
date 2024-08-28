@@ -19,6 +19,12 @@ const Urls = ()=>{
 
     }
 
+    // Calculation of pages count according received data
+    const pageCount = Math.ceil(data?.meta.total / 15)
+
+    //Calculation of initial page according received data
+    const initialPage = Number(data?.meta.current_page) - 1
+
     return <>
         {/* Open Modal for Adding new URL */}
         <button
@@ -82,9 +88,9 @@ const Urls = ()=>{
             <div className="mt-5">
                 <ReactPaginate
                     onPageChange={handlePageChange}
-                    initialPage={Number(data?.meta.current_page) - 1}
+                    initialPage={initialPage}
                     activeClassName="text-white bg-blue-500"
-                    pageCount={Math.ceil(data?.meta.total / 15)}
+                    pageCount={pageCount}
                     breakLabel="..."
                     nextLabel={'->'}
                     pageRangeDisplayed={5}
@@ -94,7 +100,7 @@ const Urls = ()=>{
                     breakLinkClassName="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700"
                     previousClassName="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700"
                     nextClassName="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700"
-                    renderOnZeroPageCount={null}
+                    renderOnZeroPageCount={true}
                 />
             </div>
         </div>
